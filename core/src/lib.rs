@@ -1,5 +1,6 @@
 use platform::Hal;
 use thiserror::Error;
+use tracing::info;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::ControlFlow,
@@ -41,17 +42,17 @@ struct Engine {}
 
 impl Engine {
     fn new() -> Result<Self, EngineError> {
-        println!("Engine::new");
+        info!("Engine::new");
 
         Ok(Self {})
     }
 
     fn tick(&mut self) {
-        println!("Engine::tick");
+        info!("Engine::tick");
     }
 
     fn shutdown(&mut self) {
-        println!("Engine::shutdown");
+        info!("Engine::shutdown");
     }
 
     fn close_requested(&self) -> bool {
@@ -66,8 +67,6 @@ impl Drop for Engine {
 }
 
 pub fn launch(_config: &Config, hal: Hal) -> Result<(), EngineError> {
-    println!("launch");
-
     let event_loop = hal.event_loop;
     let window = hal.window;
 

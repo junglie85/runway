@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ron = "*"
 serde = { version = "*", features = ["derive"] }
 thiserror = "*"
 toml = "*"
+tracing = "*"
+tracing-subscriber = "*"
 winit = "*"
