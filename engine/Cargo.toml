@@ -7,3 +7,5 @@ edition = "2021"
 ron = "*"
 serde = { version = "*", features = ["derive"] }
 thiserror = "*"
+toml = "*"
+winit = "*"

@@ -1,7 +1,7 @@
-use engine::engine_main;
+use engine::launch;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    engine_main()?;
+    launch()?;
 
     Ok(())
 }
