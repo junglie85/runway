@@ -1,2 +1,2 @@
 [workspace]
-members = ["engine", "sandbox"]
+members = ["core", "runway"]

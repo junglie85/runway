@@ -1,12 +1,17 @@
-use std::{fs::read_to_string, path::PathBuf};
-
-use serde::Deserialize;
+use platform::Hal;
 use thiserror::Error;
 use winit::{
     event::{Event, WindowEvent},
-    event_loop::{ControlFlow, EventLoop},
-    window::{Window, WindowBuilder},
+    event_loop::ControlFlow,
 };
+
+pub use crate::config::{load_config, Config};
+pub use crate::log::init_logging;
+pub use crate::platform::init_platform;
+
+mod config;
+mod log;
+mod platform;
 
 #[derive(Debug, Error)]
 pub enum EngineError {
@@ -30,17 +35,6 @@ impl EngineError {
     fn platform(e: impl std::error::Error + Send + 'static) -> Self {
         Self::Platform(Box::new(e))
     }
-}
-
-#[derive(Debug, Deserialize)]
-struct Config {
-    version: String,
-    game: GameConfig,
-}
-
-#[derive(Debug, Deserialize)]
-struct GameConfig {
-    title: String,
 }
 
 struct Engine {}
@@ -71,30 +65,11 @@ impl Drop for Engine {
     }
 }
 
-fn load_config() -> Result<Config, EngineError> {
-    let cwd = std::env::var("CARGO_MANIFEST_DIR").map_err(EngineError::io)?;
-    let path = [&cwd, "config", "sandbox.toml"].iter().collect::<PathBuf>();
-    let file = read_to_string(&path).map_err(EngineError::init)?;
-    let config = toml::from_str::<Config>(&file).map_err(EngineError::init)?;
-
-    Ok(config)
-}
-
-fn init_platform(config: &Config) -> Result<(EventLoop<()>, Window), EngineError> {
-    let event_loop = EventLoop::new();
-    let window = WindowBuilder::new()
-        .with_title(&format!("{} - {}", config.game.title, config.version))
-        .build(&event_loop)
-        .map_err(EngineError::platform)?;
-
-    Ok((event_loop, window))
-}
-
-pub fn launch() -> Result<(), EngineError> {
+pub fn launch(_config: &Config, hal: Hal) -> Result<(), EngineError> {
     println!("launch");
 
-    let config = load_config()?;
-    let (event_loop, window) = init_platform(&config)?;
+    let event_loop = hal.event_loop;
+    let window = hal.window;
 
     let mut e = Engine::new()?;
 
